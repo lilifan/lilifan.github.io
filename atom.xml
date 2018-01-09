@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-06-29T04:13:45.000Z</updated>
+  <updated>2018-01-09T01:42:43.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,278 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>《Reac 小书》笔记</title>
+    <link href="http://yoursite.com/2018/01/09/%E3%80%8AReac-%E5%B0%8F%E4%B9%A6%E3%80%8B%E7%AC%94%E8%AE%B0/"/>
+    <id>http://yoursite.com/2018/01/09/《Reac-小书》笔记/</id>
+    <published>2018-01-09T01:40:26.000Z</published>
+    <updated>2018-01-09T01:42:43.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="第一阶段"><a href="#第一阶段" class="headerlink" title="第一阶段"></a>第一阶段</h1><h2 id="React-简介"><a href="#React-简介" class="headerlink" title="React 简介"></a>React 简介</h2><ul>
+<li>React 是一个帮助构建 UI （MVC 中的View）的库</li>
+<li>组件化：组件嵌套，组合来构成页面</li>
+<li>组件的显示形态和行为与数据相关，React 能帮助我们高效做到数据与组件显示形态之间的同步<h2 id="前端组件化（一）：点赞例子"><a href="#前端组件化（一）：点赞例子" class="headerlink" title="前端组件化（一）：点赞例子"></a>前端组件化（一）：点赞例子</h2></li>
+<li>先要弄清 React 通过组件化解决的问题，然后怎么通过组件化来解决</li>
+<li>点赞功能<ul>
+<li>简单实现：与dom绑定，没法复用（复制dom也可能存在命名）；js与dom分离，需要分别复制，容易遗漏 </li>
+<li>通过类的 render 方法返回 HTML 字符串的方式可以实现结构复用</li>
+<li>通过 createDOMFromString 方法（document.createElement 新建一个 div，然后将字符串赋值给innerHTML再返回）将 HTML 字符串转换成 DOM，这样才能绑定事件</li>
+<li>然后在类里保存 dom 实例，render 过程中就可以绑定事件了，这样就将结构（HTML）和行为（js）都封装在一个可复用的类里了，类的属性还能保存这个实例的状态，比如dom 元素，显示的文本等<h2 id="前端组件化（二）：优化DOM操作"><a href="#前端组件化（二）：优化DOM操作" class="headerlink" title="前端组件化（二）：优化DOM操作"></a>前端组件化（二）：优化DOM操作</h2></li>
+</ul>
+</li>
+<li>之前状态变更以后是直接在事件里面操作DOM修改UI，如果状态很多时代码繁琐且不易维护（MVVM框架的双向数据绑定也是为了消除jQuery的手动DOM操作来简化代码，增强可维护性）</li>
+<li>新的解决方案：一旦状态变更，就重新调用render方法构建新的DOM元素，因为这些元素是通过最新的state生成的，自然就达到了数据与UI同步的目的，同时消除了手动DOM操作</li>
+<li>生成新的DOM元素以后需要通过外界绑定的事件，将变更传递出去，让父元素插入新的DOM来更新UI</li>
+<li>这种做法非常暴力，每次数据更新以后都全部重新构造，新增，删除DOM元素，会导致浏览器进行大量的重排，严重影响性能；这个问题可以通过== Virtual-DOM ==解决<h2 id="前端组件化（三）：抽象出公共组件类"><a href="#前端组件化（三）：抽象出公共组件类" class="headerlink" title="前端组件化（三）：抽象出公共组件类"></a>前端组件化（三）：抽象出公共组件类</h2></li>
+<li>如果要做一个评论组件，那么所有的方法比如 setState 都要重写一遍，其实可以将这些东西抽出来变成一个通用的模式（将相同的逻辑抽象出来复用）</li>
+<li>通用 Component 类<ul>
+<li>setState：根据新的 state 调用 _renderDOM 重新构建DOM，如果外界对实例绑定了监听事件，那么就调用，并将新旧状态都传过去</li>
+<li>_renderDOM：根据 render 方法返回的 HTML 构建DOM，如果实例有 onClick 等事件监听方法，那么就为 新的 DOM 元素绑定对应事件，绑定时会为方法 bind(this)</li>
+</ul>
+</li>
+<li>mount：将组件 DOM 插入页面，并为组件实例绑定监听方法以便组件更新时更新页面</li>
+<li>为了增加组件可配置性，在 Component类的构造函数里接受 props 传参，继承时通过 super(props)把参数传给父类（因为父类用到了props），就可通过 this.props 访问配置参数</li>
+<li>组件化可以解决前端结构的复用性问题，页面可通过组件嵌套组合来构成</li>
+<li>组件的显示形态和行为由数据状态 state 和配置参数 props 共同决定</li>
+<li>数据变化时，React 组件提供了一种高效方式来自动实现数据与UI的同步，提高了代码可维护性<h2 id="React-基本环境安装"><a href="#React-基本环境安装" class="headerlink" title="React 基本环境安装"></a>React 基本环境安装</h2></li>
+<li>create-react-app 脚手架工具<h2 id="使用-JSX-描述-UI-信息"><a href="#使用-JSX-描述-UI-信息" class="headerlink" title="使用 JSX 描述 UI 信息"></a>使用 JSX 描述 UI 信息</h2></li>
+<li>写组件时必须引入 React 和 Component，ReactDOM 用来把组件渲染到页面</li>
+<li>JSX：DOM 结构（标签名，属性，子元素）都可以用 js 对象表示，但 js 写起来很长，结构不清晰，于是 React 扩展了 js 的语法，让它能支持 js 里写类似 HTML 标签结构（并不是真正的HTML），编译时会通过 React.createElement 将这个 JSX 结构转换成 js 对象，所以使用 React 和 JSX 一定要经过编译的过程</li>
+<li>所以 JSX 实际就是 js 对象，看到 JSX 时，脑袋就可以自动转换</li>
+<li>ReactDOM.render 将 js 对象构造成真正的 DOM，然后渲染到页面<br><img src="http://huzidaha.github.io/static/assets/img/posts/44B5EC06-EAEB-4BA2-B3DC-325703E4BA45.png" alt="image"></li>
+<li>中间层 js 对象存在的原因：<ul>
+<li>不一定会将 js 对象渲染到页面，也可能是 canvas（react-canvas） 或者手机 app (ReactNative)</li>
+<li>当数据变化需要更新时，可以用比较快的算法操作 js 对象，不用直接操作 DOM，减少浏览器重排，优化性能<h2 id="组件的-render-方法"><a href="#组件的-render-方法" class="headerlink" title="组件的 render 方法"></a>组件的 render 方法</h2></li>
+</ul>
+</li>
+<li>React中一切皆组件，组件的 render 方法返回一个 JSX，注意不能并列返回多个JSX，必须用外层元素包裹住，return 时还用括号包裹</li>
+<li>JSX 中可以用{}插入 js 表达式（包括变量，表达式，函数调用等），并将表达式结果渲染到页面；不仅可以嵌入到标签内部，还能嵌入标签属性</li>
+<li>因为class,for是js关键字，所以 React 中用 className，htmlFor 代替</li>
+<li>{} 内可以嵌入任何表达式，包括 JSX，所以可以根据条件返回不同 JSX；特殊情况是返回 null，这时什么也不渲染，可以通过这个做到条件渲染</li>
+<li>JSX 既然是 js 对象，那么就可以为变量赋值，作为参数传递，作为函数返回值<h2 id="组件的组合、嵌套和组件树"><a href="#组件的组合、嵌套和组件树" class="headerlink" title="组件的组合、嵌套和组件树"></a>组件的组合、嵌套和组件树</h2></li>
+<li>自定义的组件可以像原生标签一样被其他组件嵌套使用，渲染的是 render 方法返回的 JSX</li>
+<li>自定义组件都要大写字母开头，普通HTML标签都用小写开头，否则 React 可能会处理出错</li>
+<li>自定义组件可以自闭合，也可以有单独的闭合标签，看实际需求<h2 id="事件监听"><a href="#事件监听" class="headerlink" title="事件监听"></a>事件监听</h2></li>
+<li>React 直接在元素上添加 onClick 等属性即可监听事件（驼峰命名），不需手动调用原生的 addEventListener，也不需考虑兼容问题</li>
+<li>这种写法只能用在普通 HTML 标签上。自定义组件要想这样的话需要特殊处理</li>
+<li>监听方法接收一个 event 事件参数，与原生对象类似，但其实是 React自己提供的，经过了统一封装的兼容处理</li>
+<li>类的示例方法中 this 指代实例，但是事件监听方法因为是异步执行，不是通过 this.xxx 调用，而是直接的函数调用，所以如果想在监听函数里访问 this，需要提前手动 bind 好，bind 过程还能传入一些自定义参数<h2 id="组件的-state-和-setState"><a href="#组件的-state-和-setState" class="headerlink" title="组件的 state 和 setState"></a>组件的 state 和 setState</h2></li>
+<li>state 属性存储组件状态</li>
+<li>setState 用来更新状态，里面会自动重新 render 会渲染更新到页面，如果直接对 state 属性赋值则没这个效果<ul>
+<li>接受对象参数时，只需要传入需要更新的部分即可；注意这时 React 并不会马上修改 state，而是将这个更新对象放到一个更新队列里面，稍后才会取出来合并，最后再一并更新组件；所以不需要担心多次 setState 带来性能问题</li>
+<li>接受函数作为参数：React 会将上一个 setState 结果传过来，然后你返回新的 state 即可</li>
+</ul>
+</li>
+<li>习题总结：不能摸的狗<ul>
+<li>尽量用箭头函数，一是代码简洁，二是能避免需要手动 bind(this) 的情况</li>
+<li>调用组件实例方法时，不能省略 this，实例方法并不是作用域的全局方法<h2 id="配置组件的-props"><a href="#配置组件的-props" class="headerlink" title="配置组件的 props"></a>配置组件的 props</h2></li>
+</ul>
+</li>
+<li>把参数放在标签的属性里，所有属性都会作为 props 对象的键值，组件内部可以通过 this.props 访问配置信息；可以通过{}插入任何类型的属性值</li>
+<li>static defaultProps 这个组件类属性里面可以配置配置信息默认值</li>
+<li>props 不可变，因为 React 希望确定的 props 输出确定的 UI，如果渲染过程可以更改 props，那么组件行为就会变得不可预测</li>
+<li>但这不意味着由 props 决定的显示形态不可修改，组件使用者可以主动通过父组件重新渲染的方式把新的 props 传入组件</li>
+<li>习题总结：显示器开关这种依赖上一个状态的 setState 必须要传函数参数，否则状态不能正确变更<h2 id="state-vs-props"><a href="#state-vs-props" class="headerlink" title="state vs props"></a>state vs props</h2></li>
+<li>state 是用于组件保存，控制，修改自身的可变状态，它是在组件内部初始化，可以被组件自身修改，但外部不能访问也不能修改</li>
+<li>props 是让父组件可以传参来配置该组件，配置信息组件内部无法控制也无法修改，除非父组件主动传入新的 props，否则它永不变</li>
+<li>两者联系紧密，它们都可以决定组件的行为和显示形态，一个组件的 state 可以通过 props 传给子组件，子组件可以用父组件传进来的 props 来初始化自身的 state</li>
+<li>尽量少用 state，尽量多用 props</li>
+<li>没有 state 的组件叫做 stateless component，设置了 state 就叫 stateful component；因为状态会带来管理的复杂性，所以要尽量多写无状态组件</li>
+<li>函数式组件：不能使用 state 的无状态组件，一个函数就是一个组件，只能接受 props 并且返回 JSX 的组件<br>、、、<br>const HelloWorld = (props)=&gt;{<br>  const sayHi = (event)=&gt;alert(‘hello’)<br>  return (<pre><code>&lt;div onClick={sayHi}&gt;HelloWorld&lt;/div&gt;
+</code></pre>  )<br>}<br>、、、<h2 id="渲染列表数据"><a href="#渲染列表数据" class="headerlink" title="渲染列表数据"></a>渲染列表数据</h2></li>
+<li>如果你在 JSX 中往 {} 放一个JSX数组，React 会帮你把数组里面的元素一个个罗列渲染出来</li>
+<li>通过 map 方法可以避免手动写循环</li>
+<li>React 要求列表元素都包含 key 属性，以便在列表元素交换位置时尽量复用 DOM 结构来避免重复构建 DOM；这个 key 是每个元素在列表下唯一的标识，一般取后台返回的id，或者自己生成唯一标识（比如通过 shortid 库）</li>
+<li>如果列表元素直接取索引作为 key，那么当元素位置不变，只是数据变了时，根据 Virtual-DOM 的 diff 算法，key 相同是不会重新 render 子数据，那么这时数据显示就不正确了，但==如果用 id 作为 key，也避免不了这个问题吧？==</li>
+<li>虽然 key 也是通过标签属性赋值，但是不能通过 props 访问<h2 id="实战分析"><a href="#实战分析" class="headerlink" title="实战分析"></a>实战分析</h2></li>
+<li>组件划分：拿到一个需求以后，先理解需求、分析需求，然后再划分这个需求由哪些组件构成</li>
+<li>划分组件的目的是为了代码的可复用性，可维护性，没有明确标准</li>
+<li>如果一个文件导出的是一个类，那么这个文件名就用大写开头</li>
+<li>自顶向下，逐步求精 来划分组件</li>
+<li>React 认为所有的状态都应该由组件的 state 控制，包括输入控件的 value 值(变成受控组件)</li>
+<li>return JSX 时最好用（）包裹起来</li>
+<li>评论列表通过 CommentApp state 内的评论列表以 props 的方式传给 CommentList，好处在于 CommentInput 通过回调函数更改 CommentApp 的 state 以后，由 这个 state 构建出来的 CommentList 就会自动更新，这个非常优雅方便！<h1 id="第二阶段"><a href="#第二阶段" class="headerlink" title="第二阶段"></a>第二阶段</h1><h2 id="前端应用状态管理-状态提升"><a href="#前端应用状态管理-状态提升" class="headerlink" title="前端应用状态管理 - 状态提升"></a>前端应用状态管理 - 状态提升</h2></li>
+<li>将组件间共享（依赖或影响）的状态交给组件最近的公共父节点保管，通过 props 传递（数据或回调函数）给子组件</li>
+<li>组件的 state 并不是默认自带的（有无状态组件），如果组件需要存储状态，即使创建时没数据，也要将 state 初始化为空对象，当然也可为数组<h2 id="挂载阶段的组件生命周期"><a href="#挂载阶段的组件生命周期" class="headerlink" title="挂载阶段的组件生命周期"></a>挂载阶段的组件生命周期</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ReactDOM.render(</div><div class="line"> &lt;Header /&gt;, </div><div class="line">  document.getElementById(&apos;root&apos;)</div><div class="line">)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>会编译成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ReactDOM.render(</div><div class="line">  React.createElement(Header, null), </div><div class="line">  document.getElementById(&apos;root&apos;)</div><div class="line">)</div></pre></td></tr></table></figure></p>
+<p>实际执行的事情为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">// React.createElement 中实例化一个 Header</div><div class="line">const header = new Header(props, children)</div><div class="line">// React.createElement 中调用 header.render 方法渲染组件的内容</div><div class="line">const headerJsxObject = header.render()</div><div class="line"></div><div class="line">// ReactDOM 用渲染后的 JavaScript 对象来来构建真正的 DOM 元素</div><div class="line">const headerDOM = createDOMFromObject(headerJsxObject)</div><div class="line">// ReactDOM 把 DOM 元素塞到页面上</div><div class="line">document.getElementById(&apos;root&apos;).appendChild(headerDOM)</div></pre></td></tr></table></figure></p>
+<ul>
+<li><p>组件的挂载：React 将组件渲染，并且构建 DOM 元素然后塞入页面的过程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">-&gt; constructor()</div><div class="line">-&gt; componentWillMount()</div><div class="line">-&gt; render()</div><div class="line">// 然后构造 DOM 元素插入页面</div><div class="line">-&gt; componentDidMount()</div><div class="line">// ...</div><div class="line">// 即将从页面中删除</div><div class="line">-&gt; componentWillUnmount()</div><div class="line">// 从页面中删除</div></pre></td></tr></table></figure>
+</li>
+<li><p>constructor：状态初始化工作</p>
+</li>
+<li>componentWillMount：组件启动的动作，比如 Ajax 拉取数据，启动定时器等</li>
+<li>定时器启动后要注意在组件卸载前取消，否则会报错，因为 setState 只能在已经挂载或正在挂载的组件上调用 。不停隐藏显示以后会构建多个定时器，==而且因为 JavaScript 的闭包特性，这样会导致严重的内存泄漏。==</li>
+<li>componentDidMount：有些组件的启动工作是依赖 DOM 的，例如动画的启动，而 componentWillMount 的时候组件还没挂载完成，所以没法进行这些启动工作，这时候就可以把这些操作放在 componentDidMount 当中</li>
+<li>componentWillUnmount：组件销毁时做清理工作<h2 id="更新阶段的组件生命周期"><a href="#更新阶段的组件生命周期" class="headerlink" title="更新阶段的组件生命周期"></a>更新阶段的组件生命周期</h2></li>
+<li>挂载阶段：DOM 从无到有的过程</li>
+<li>更新阶段：setState 导致组件重新渲染并将变化应用到 DOM 的过程<ul>
+<li>shouldComponentUpdate(nextProps, nextState)：控制组件是否重新渲染，用于性能优化</li>
+<li>componentWillReceiveProps(nextProps)：组件从父组件接收到新的 props 之前调用</li>
+<li>componentWillUpdate()：组件开始重新渲染之前调用</li>
+<li>componentDidUpdate()：组件重新渲染并且把更改变更到真实的 DOM 以后调用<h2 id="ref-和-React-js-中的-DOM-操作"><a href="#ref-和-React-js-中的-DOM-操作" class="headerlink" title="ref 和 React.js 中的 DOM 操作"></a>ref 和 React.js 中的 DOM 操作</h2></li>
+</ul>
+</li>
+<li>给 JSX 元素加上 ref 属性，值为一个函数，React 在挂载完成以后会将 DOM 元素传进来</li>
+<li>可以给任意代表 HTML 元素标签加上 ref 从而获取到它 DOM 元素然后调用 DOM API。但是记住一个原则：能不用 ref 就不用。</li>
+<li>可以加在组件上，获取到的是这个组件在 React.js 内部初始化的实例，不常用<h2 id="props-children-和容器类组件"><a href="#props-children-和容器类组件" class="headerlink" title="props.children 和容器类组件"></a>props.children 和容器类组件</h2></li>
+<li>所有嵌套在组件中的 JSX 结构都可以在组件内通过 props.children 获取</li>
+<li><p>这种嵌套的内容成为了 props.children 数组的机制使得我们编写组件变得非常的灵活，我们甚至可以在组件内部把数组中的 JSX 元素安置在不同的地方，抽象出来就是一个通用的布局容器组件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;div className=&apos;editor-wrapper&apos;</div><div class="line">        dangerouslySetInnerHTML=&#123;&#123;__html: this.state.content&#125;&#125; /&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>动态设置元素的 innerHTML，直接插值的话会被 React 转义来防止 XSS 攻击</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// 普通HTML</div><div class="line">&lt;h1 style=&apos;font-size: 12px; color: red;&apos;&gt;React.js 小书&lt;/h1&gt;</div><div class="line">// JSX</div><div class="line">&lt;h1 style=&#123;&#123;fontSize: &apos;12px&apos;, color: &apos;red&apos;&#125;&#125;&gt;React.js 小书&lt;/h1&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>React 中的 style 接受对象，而且样式名必须为驼峰；用对象作为 style 方便我们动态设置样式</p>
+<h2 id="PropTypes-和组件参数验证"><a href="#PropTypes-和组件参数验证" class="headerlink" title="PropTypes 和组件参数验证"></a>PropTypes 和组件参数验证</h2></li>
+<li>安装一个 React 提供的第三方库 prop-types</li>
+<li>为组件配置 static propTypes 对象</li>
+<li>组件参数验证在构建大型组件库时非常有用，能够规范组件的使用，便于排查问题，同时也可作为组件的文档<h2 id="评论功能实战（四）"><a href="#评论功能实战（四）" class="headerlink" title="评论功能实战（四）"></a>评论功能实战（四）</h2></li>
+<li>组件生命周期方法内尽量不要写太多逻辑，单独的逻辑都抽出私有方法来调用，这样便于以后维护</li>
+<li>所有事件监听方法都以 handle 开头</li>
+<li>把事件监听方法传给子组件时，属性名用 on 开头</li>
+<li>这样规范化命名能给我们带来语义化组件的好处</li>
+<li>组件内容编写顺序<ol>
+<li>staic 类属性：defaultProps、propTypes 等</li>
+<li>构造函数</li>
+<li>getter、setter</li>
+<li>组件生命周期方法</li>
+<li>_ 开头的私有方法</li>
+<li>handle 开头的事件监听方法</li>
+<li>render 开头的子渲染方法</li>
+<li>render（）</li>
+</ol>
+</li>
+<li>在构造器里 this.props 还为 undefined，因为构造完 this 才为组件实例，所以要想用 this.props 为 state 赋值，必须在 componentWillMount 里</li>
+<li>虽然不能通过 this.props 访问，但是构造器默认的参数就是 props，可以通过参数访问<h1 id="第三阶段"><a href="#第三阶段" class="headerlink" title="第三阶段"></a>第三阶段</h1><h2 id="高阶组件"><a href="#高阶组件" class="headerlink" title="高阶组件"></a>高阶组件</h2></li>
+<li>高阶组件就是一个函数，传给它一个组件，它返回一个新的组件，它是函数而不是组件，一般使用参数作为子组件，然后为它增加一些功能</li>
+<li>高阶组件的目的就是为了组件之间的代码复用</li>
+<li>代码复用有很多方式<ul>
+<li>类继承</li>
+<li>分离模块</li>
+<li>高阶组件：装饰者模式<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">render () &#123;</div><div class="line">      return (</div><div class="line">        &lt;WrappedComponent</div><div class="line">          data=&#123;this.state.data&#125;</div><div class="line">          saveData=&#123;this.saveData.bind(this)&#125;</div><div class="line">          // 这里的意思是把其他的参数原封不动地传递给被包装的组件</div><div class="line">          &#123;...this.props&#125; /&gt;</div><div class="line">      )</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="React-中的-context"><a href="#React-中的-context" class="headerlink" title="React 中的 context"></a>React 中的 context</h2><ul>
+<li>组件树的共享状态（组件为根的子树的全局变量），子组件可以直接访问而不需要中间组件的传递，父组件不可访问</li>
+<li>作为根的组件本身不能通过 this.context 访问，即使写了 contextTypes 也不行</li>
+<li><p>组件的写法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">static childContextTypes = &#123;</div><div class="line">    themeColor: PropTypes.string</div><div class="line">&#125;//申明和验证类型</div><div class="line">getChildContext () &#123;</div><div class="line">    return &#123; themeColor: this.state.themeColor &#125;</div><div class="line">&#125;//设置数据</div></pre></td></tr></table></figure>
+</li>
+<li><p>子组件的写法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">static contextTypes = &#123;</div><div class="line">    themeColor: PropTypes.string</div><div class="line">&#125;//申明和验证类型</div><div class="line">&lt;h1 style=&#123;&#123; color: this.context.themeColor &#125;&#125;&gt;React.js 小书标题&lt;/h1&gt;//获取数据</div></pre></td></tr></table></figure>
+</li>
+<li><p>（通过 state）更改 context，用到里面状态的子组件都会自动重新渲染</p>
+</li>
+<li>context 打破了组件和组件之间通过 props 传递数据的规范，极大地增强了组件之间的耦合性。而且，就如全局变量一样，context 里面的数据能被随意接触就能被随意修改，每个组件都能够改 context 里面的内容会导致程序的运行不可预料<h2 id="动手实现-Redux"><a href="#动手实现-Redux" class="headerlink" title="动手实现 Redux"></a>动手实现 Redux</h2></li>
+<li>Redux 是一种架构模式（Flux 的变种），可以与任何库结合</li>
+<li>核心矛盾：组件之间需要共享数据 与 数据可能被任意修改导致不可预料结果</li>
+<li>Redux：提高修改数据门槛<ul>
+<li>只允许特定修改</li>
+<li>必须通过特定方法修改</li>
+</ul>
+</li>
+<li>核心思想：加一个中间层进行管控<ul>
+<li>过滤修改动作</li>
+<li>为修改善后</li>
+</ul>
+</li>
+<li>抽象 state，dispatch<ul>
+<li>将他们都放入 store，接受 state 和 stateChanger，暴露2个方法：getState，dispatch</li>
+</ul>
+</li>
+<li><p>监控数据变化</p>
+<ul>
+<li>dispatch 数据变了以后，希望能够自动 renderApp，而这个非通用的方法不能写死在 dispacth 里面，这里就需要订阅消息解耦，用到了观察者模式</li>
+<li>store 数据源在 dispatch 以后挨个通知各个订阅者即可</li>
+<li>可以用同一份数据渲染多个页面，数据变了多个页面自动同步更新<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">class EventEmitter &#123;</div><div class="line">    constructor() &#123;</div><div class="line">        this.handlers = &#123;&#125;;// class的实例属性都是在构造器初始化</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    on(event, func) &#123;</div><div class="line">        this.handlers[event] = this.handlers[event] || [];//判断存在还可以用 in 操作符，或者 hasOwnProperty 方法</div><div class="line">        this.handlers[event].push(func);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    emit(event, ...args) &#123;</div><div class="line">        this.handlers[event] = this.handlers[event] || [];</div><div class="line">        this.handlers[event].forEach((func) =&gt; func.call(null, ...args))</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    off(event, func) &#123;</div><div class="line">        var handlers = this.handlers[event] || [];</div><div class="line">        if (handlers.includes(func)) &#123; // 用ES6的 includes 比indexOf要好，更比自己去循环找元素好</div><div class="line">            handlers.splice(handlers.indexOf(func), 1);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>纯函数（pure function）：一个函数的返回结果只依赖它的参数，并且执行过程中没有副作用（产生外部可观察的变化，比如修改外部变量，修改 DOM，发送请求，刷新页面，打印消息等）；纯函数除了计算啥都不能干，计算时还不能依赖外部数据</p>
+</li>
+<li>纯函数：非常靠谱，稳定；不会有不可预料的结果，不会产生额外影响，方便测试调试</li>
+<li>共享对象的结果<ul>
+<li>为了提高性能，state 未变的部分不需要重新渲染，之前 stateChanger 里面是直接修改 state，导致 state 一直同一个对象，没法通过 == 判断数据是否已变化</li>
+<li>禁止直接修改原来的对象，通过对象浅复制，将修改路径上的所有对象都复制一遍，方便渲染操作时检测更新</li>
+<li>不需担心每次修改都新建共享结构对象会有性能、内存等问题，因为构建对象的成本非常低，而且我们最多保存新旧2个对象引用，其余旧对象都会被垃圾回收</li>
+</ul>
+</li>
+<li>reducer<ul>
+<li>将 appState 和 stateChanger 合并，当不传入 state 时返回初始数据，传入时返回更新数据，改名为 reducer，它是一个纯函数，接受 state,action 2个参数，只做2件事，初始化和计算新的state<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">原答案：</div><div class="line">const usersReducer = function (state, action) &#123;</div><div class="line">    if (!state) &#123;</div><div class="line">        return [];</div><div class="line">    &#125;</div><div class="line">    switch (action.type) &#123;</div><div class="line">        case &apos;ADD_USER&apos;:</div><div class="line">            return [...state, action.user];</div><div class="line">        case &apos;DELETE_USER&apos;:</div><div class="line">            state.splice(action.index, 1);// reducer 是纯函数，不能修改参数</div><div class="line">            return [...state];</div><div class="line">        case &apos;UPDATE_USER&apos;:</div><div class="line">            state[action.index] = &#123;...state[action.index], ...action.user&#125;;// reducer 是纯函数，不能修改参数</div><div class="line">            return [...state];</div><div class="line">        default:</div><div class="line">            return state;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">正解：</div><div class="line">const usersReducer = function (state, action) &#123;</div><div class="line">    if (!state) &#123;</div><div class="line">        return [];</div><div class="line">    &#125;</div><div class="line">    switch (action.type) &#123;</div><div class="line">        case &apos;ADD_USER&apos;:</div><div class="line">            return [...state, action.user];</div><div class="line">        case &apos;DELETE_USER&apos;:</div><div class="line">            return [...state.slice(0, action.index), ...state.slice(action.index + 1)];//要始终返回新对象，而且不能修改原对象</div><div class="line">        case &apos;UPDATE_USER&apos;:</div><div class="line">            return [...state.map((user, index) =&gt; &#123;</div><div class="line">                if (index == action.index) &#123;</div><div class="line">                    return &#123;...user, ...action.user&#125;</div><div class="line">                &#125;</div><div class="line">                return user;</div><div class="line">            &#125;)];</div><div class="line">        //     或者  return [</div><div class="line">        // ...state.slice(0, action.index),</div><div class="line">        //     &#123;...state[action.index],...action.user&#125;,</div><div class="line">        // ...state.slice(action.index + 1)</div><div class="line">        // ];</div><div class="line">        default:</div><div class="line">            return state;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="实现-React-Redux"><a href="#实现-React-Redux" class="headerlink" title="实现 React-Redux"></a>实现 React-Redux</h2><ul>
+<li>状态提升跟不上需求变更，代码不易维护，context 虽然方便了，但是增强了组件的耦合，全局变量容易引入 bug，所以讲 context 和 store 结合起来就好了，每个组件都能去 context 里面取数据，但是不能随便乱改了</li>
+<li>在父组件里面构建 store 并且放到 context 里面，组件可以取到全局状态，但是 dispatch 之后原 state 并没更改，而是 store 里面 state 换成了一个新对象，组件里面的 state 需要同步更新，所以在组件的 componentWillMount 里面取到 store 后需要 subscribe store 的更新事件<h2 id="connect-与-mapStateToProps"><a href="#connect-与-mapStateToProps" class="headerlink" title="connect 与 mapStateToProps"></a>connect 与 mapStateToProps</h2></li>
+<li>上面的实现有 2 个问题<ul>
+<li>大量重复逻辑：从 context 里面取数据，设置状态 =&gt; 将相同逻辑抽象成高阶组件 connect（它将 context 与 Dumb Context 连接起来）</li>
+<li>另外对 context 强依赖，导致没法复用 =&gt; 只依赖外界传入的 props 以及自己的 state，不依赖其他外部数据，也不产生副作用，复用性才好（Pure / Dumb Component）</li>
+</ul>
+</li>
+<li>connect<br><img src="http://huzidaha.github.io/static/assets/img/posts/ED7B72E6-73BE-429F-AE3C-F9C15C3BE35E.png" alt="image"><ul>
+<li>WrappedComponent 需要包裹的组件</li>
+<li>mapStateToProps 告诉高阶函数我们需要什么样的数据，会传入 state 和高阶组件接受到的 props</li>
+<li>connect 还需要监听 store 的数据变化然后重新渲染，所以它需要有自己的 state，state 里面存的是 stateProps，dispatchProps 以及接收到的原生 props，用 state 去渲染包裹组件传递参数就能达到自动重新渲染的目的（因为 setState 会自动调用 render）</li>
+<li>为了让 connect 返回新组件和被包装的组件使用参数保持一致，我们会把所有传给 Connect 的 props 原封不动地传给 WrappedComponent</li>
+<li>有的组件不仅需要 store 来取数据，还需要 store 来 dispatch 事件，这时我们需要告诉高阶函数我们怎么使用 dispatch 来分发事件：定义mapDispatchToProps，高阶组件会将 dispatch 传进来，然后返回的对象方法就可以利用这个 dispatch 来分发事件，对象的所有属性还是会下传到封装组件</li>
+<li>这里遇到一个问题，需要对这2个函数判空或者预设默认值，同时封装组件使用方法属性时也需要判空，除非定义了 propTypes</li>
+<li>之前我以为还需要用到 store 的 subscribe 来订阅变化，但只要组件的数据是从属性取得，那么 store 的数据变化就会自动同步到（这个逻辑包含在 connect 里了），不需要你去手动监听</li>
+<li>如果你监听数据不是用来显示，而是干别的，比如保存本地，那么把这逻辑写在数据来源的 smart 组件</li>
+</ul>
+</li>
+<li>Provider<ul>
+<li>需要把所有 context，store 相关的代码都去除，但根组件怎么办？总要有一个组件将 store 放入 context 里供子组件使用啊，那我们可以专门定义一个组件来干这个脏话</li>
+<li>Provider 就是简单将通过属性传进来的 store 放到 context 里面，然后将内嵌的组件通过this.props.children的方式原样渲染<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div></pre></td><td class="code"><pre><div class="line">//用户增删展示</div><div class="line">class User extends Component &#123;</div><div class="line">    render() &#123;</div><div class="line">        const &#123;user&#125; = this.props</div><div class="line">        return (</div><div class="line">            &lt;div&gt;</div><div class="line">                &lt;div&gt;Name: &#123;user.username&#125;&lt;/div&gt;</div><div class="line">                &lt;div&gt;Age: &#123;user.age&#125;&lt;/div&gt;</div><div class="line">                &lt;div&gt;Gender: &#123;user.gender&#125;&lt;/div&gt;</div><div class="line">                &lt;button onClick=&#123;this.props.onDelete&#125;&gt;删除&lt;/button&gt;</div><div class="line">            &lt;/div&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">class UsersList extends Component &#123;</div><div class="line">    onAdd() &#123;</div><div class="line">        this.props.onAdd(&#123;</div><div class="line">            username: this.username.value,</div><div class="line">            age: +this.age.value,</div><div class="line">            gender: this.male.checked ? this.male.value : this.female.value</div><div class="line">        &#125;)</div><div class="line">        this.username.value = &apos;&apos;</div><div class="line">        this.age.value = 0</div><div class="line">        this.male.checked = false</div><div class="line">        this.female.checked = false//如果搞成受控组件（React推荐的方式），就不需要通过DOM取值，还是通过onchange事件将值绑定到state，在复杂情形下会更易维护</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;div&gt;</div><div class="line">                &#123;/* 输入用户信息，点击“新增”按钮可以增加用户 */&#125;</div><div class="line">                &lt;div className=&apos;add-user&apos;&gt;</div><div class="line">                    &lt;div&gt;Username: &lt;input type=&apos;text&apos; ref=&#123;(username) =&gt; this.username = username&#125;/&gt;&lt;/div&gt;</div><div class="line">                    &lt;div&gt;Age: &lt;input type=&apos;number&apos; ref=&#123;(age) =&gt; this.age = age&#125;/&gt;&lt;/div&gt;</div><div class="line">                    &lt;div&gt;Gender:</div><div class="line">                        &lt;label&gt;Male: &lt;input type=&apos;radio&apos; name=&apos;gender&apos; value=&apos;male&apos;</div><div class="line">                                            ref=&#123;(male) =&gt; this.male = male&#125;/&gt;&lt;/label&gt;</div><div class="line">                        &lt;label&gt;Female: &lt;input type=&apos;radio&apos; name=&apos;gender&apos; value=&apos;female&apos;</div><div class="line">                                              ref=&#123;(female) =&gt; this.female = female&#125;/&gt;&lt;/label&gt;//如果要绑定onchange事件的话，对于radio这类元素，可以绑定在父组件上，一样可以通过事件冒泡获得值</div><div class="line">                        //或者干脆搞一个通用的事件，在里面根据target的类型来分别处理</div><div class="line">                    &lt;/div&gt;</div><div class="line">                    &lt;button onClick=&#123;this.onAdd.bind(this)&#125;&gt;增加&lt;/button&gt;</div><div class="line">                &lt;/div&gt;</div><div class="line">                &#123;/* 显示用户列表 */&#125;</div><div class="line">                &lt;div className=&apos;users-list&apos;&gt;</div><div class="line">                    &#123;this.props.users.map((user, i) =&gt; &lt;User key=&#123;user.username&#125;</div><div class="line">                                                             onDelete=&#123;this.props.onDelete.bind(this, i)&#125;//直接在这里将index绑死,User里面就可以直接用了</div><div class="line">                                                             user=&#123;user&#125;/&gt;)&#125;</div><div class="line">                &lt;/div&gt;</div><div class="line">            &lt;/div&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">function mapStateToProps(state) &#123;</div><div class="line">    return &#123;</div><div class="line">        users: state</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">function mapDispatchToProps(dispatch) &#123;</div><div class="line">    return &#123;</div><div class="line">        onDelete: function (index) &#123;</div><div class="line">            dispatch(&#123;</div><div class="line">                type: &apos;DELETE_USER&apos;,</div><div class="line">                index</div><div class="line">            &#125;)</div><div class="line">        &#125;,</div><div class="line">        onAdd: function (user) &#123;</div><div class="line">            dispatch(&#123;</div><div class="line">                type: &apos;ADD_USER&apos;,</div><div class="line">                user</div><div class="line">            &#125;)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">UsersList = connect(mapStateToProps, mapDispatchToProps)(UsersList);</div><div class="line">export &#123;UsersList, usersReducer&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Dumb-组件-vs-Smart-组件"><a href="#Dumb-组件-vs-Smart-组件" class="headerlink" title="Dumb 组件 vs Smart 组件"></a>Dumb 组件 vs Smart 组件</h2><ul>
+<li>Dumb 组件：接受 props 渲染确定的结果，不依赖除 React，Dumb 组件以外的东西，复用性好</li>
+<li>Smart 组件：专门做数据相关的应用逻辑，比如 ajax，redux 等，然后通过 props 传给 Dumb 组件，带领 dumb 组件完成复杂的应用程序逻辑（负责应用的逻辑、数据，把所有相关的 Dumb（Smart）组件组合起来，通过 props 控制它们），它们不需要考虑复用性，因为就是用来执行特定应用逻辑的</li>
+<li>components 目录放 Dumb 组件</li>
+<li>containers 目录放 Smart 组件</li>
+<li>一个组件需不需要做成 Dumb 组件取决于是否有复用的需求</li>
+<li>如果子组件要做成 dumb 的，那么它需要的数据就只能通过父组件传进，而不能自己 connect 了</li>
+<li>Smart 在特定场景也可复用，而 Dumb 组件则可以跨场景复用<h2 id="实战评论"><a href="#实战评论" class="headerlink" title="实战评论"></a>实战评论</h2></li>
+<li>随着应用越来越复杂，需要更多的 reducer 来帮助管理应用，所以单独建个 reducers 目录</li>
+<li>评论 app 只有一个状态 comments，对它的操作有增删以及初始化，想清楚状态及操作就可以写 reducer了,reducer 不要default时返回state</li>
+<li>之前 dispatch 时需要手动构建对象，写 action type，可以将这个构建过程封装成方法，叫做 action creators，额外的好处是它可以对传入的数据做统一的处理</li>
+<li>个人写 reducer 的习惯<ul>
+<li>定义 actionTypes</li>
+<li>编写 reducer</li>
+<li>跟这个 reducer 相关的 action creators（因为大多数情况特定的 action 都只影响特定的 reducer，放在一起更易读易维护）<br><img src="http://huzidaha.github.io/static/assets/img/posts/6F7A1EE0-9AF4-4AB3-B554-A01E9074FC3C.png" alt="image"></li>
+</ul>
+</li>
+<li>Dumb 组件相当于 View，只负责渲染展示，Smart 组件负责应用逻辑，相当于 Controller，Store 存储数据，相当于 Model</li>
+<li>connect 的实现，虽然看着很自然，但是不看书自己来独立实现，还是会遇到很多问题，所以理解还不深刻，一定要做到能独立还原实现的地步，光看不动手是不行的</li>
+<li>评论 APP 重构<ul>
+<li>之前 CommentInput 依赖 localStorage，现在要将它变成 dumb 组件，那么就要将读写 localstorage 的行为变为属性传进来，同时为它加一个对应的 Smart 组件来与 localstorage 打交道，同时 Smart 组件还负责 dispatch 添加评论的事件</li>
+<li>之前 CommentList 组件也需要与 localStorage 打交道，也是依样如法炮制，评论列表还需要负责 dispatch 加载评论与删除评论的事件</li>
+<li>原来的 CommentApp 负责整个的状态管理与事件分发，现在它将状态管理交给了 store，事件分发也是各个组件自己去 dispatch，而不由 CommentApp 来传递，各个组件更内聚，整个逻辑也更清晰了</li>
+<li>初始化评论列表以及用户名我是觉得放在 reducer 里面更自然，而更新评论列表到 localStorage，我是放在评论列表组件的 更新生命周期内（一开始放到 构造器和挂载前 都失败了），React 会重用原先的组件而不是重新构造，保存用户名我觉得还是可以放到 blur 事件里，读取则同样放到 reducer（包裹组件与被包裹组件是作为整体挂载在页面上的，但是也会调用生命周期函数）</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;第一阶段&quot;&gt;&lt;a href=&quot;#第一阶段&quot; class=&quot;headerlink&quot; title=&quot;第一阶段&quot;&gt;&lt;/a&gt;第一阶段&lt;/h1&gt;&lt;h2 id=&quot;React-简介&quot;&gt;&lt;a href=&quot;#React-简介&quot; class=&quot;headerlink&quot; title=&quot;R
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Hello World</title>
